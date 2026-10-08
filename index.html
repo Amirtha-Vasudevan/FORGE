@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FORGE – Proving learning, not just answers</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27%231f6b52%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2712%27 fill=%27%23e6dfce%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e6dfce;--band:#ddd4bf;--surface:#f2ede1;--ink:#26231d;--muted:#6b6553;--line:#cdc3ab;
+  --ok:#1f6b52;--ok-bg:#d2e2d2;--warn:#a8481f;--warn-bg:#ecd0bb;--code:#2b2924;--code-ink:#e8e2d3;--deep:#1f4a3a;
+  color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.65 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;line-height:1.05;margin:0;letter-spacing:-.025em}
+h1{font-size:clamp(2.6rem,6.4vw,4.9rem);font-weight:700}
+h2{font-size:clamp(1.9rem,3.8vw,2.9rem);font-weight:700}
+h3{font-size:1.2rem;font-weight:700;letter-spacing:-.01em}
+p{margin:0}a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+section{padding:96px 0}
+.band{background:var(--band)}
+.muted{color:var(--muted)}
+.lead{font-size:1.18rem;color:var(--muted);max-width:56ch}
+.sub{margin-top:14px}
+:focus-visible{outline:2px solid var(--ok);outline-offset:3px;border-radius:4px}
+
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo{font:700 1.4rem "Bricolage Grotesque",sans-serif;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo i{width:12px;height:12px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-bg)}
+nav ul{display:flex;gap:30px;list-style:none;margin:0;padding:0;font-size:.95rem}
+nav ul a{text-decoration:none;color:var(--muted)}nav ul a:hover{color:var(--ink)}
+.btn{display:inline-block;padding:13px 24px;border-radius:999px;font-weight:600;font-size:.97rem;text-decoration:none;border:1px solid var(--ok);background:var(--ok);color:#f6f2e8;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px);background:var(--deep)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bg)}
+@media(max-width:760px){nav ul{display:none}}
+
+.hero{padding:80px 0 72px;background-image:radial-gradient(var(--line) 1.2px,transparent 1.2px);background-size:26px 26px}
+.hero .copy{max-width:800px}
+.hero h1{margin-bottom:24px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.facts{display:flex;gap:10px 28px;flex-wrap:wrap;margin-top:36px;font-size:.93rem;color:var(--muted)}
+.facts span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:9px}
+
+.demo{margin-top:56px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 40px 70px -45px rgba(60,45,20,.55)}
+.tabs{display:flex;gap:8px;padding:2px 2px 14px;flex-wrap:wrap;align-items:center}
+.tab{font:500 .9rem "Instrument Sans";padding:9px 17px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs .replay{margin-left:auto}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.editor{background:var(--code);border-radius:14px;color:var(--code-ink);font:400 .92rem/1.7 "JetBrains Mono",monospace;padding:18px 20px;min-height:240px;white-space:pre-wrap;overflow-x:auto}
+.editor .cur{display:inline-block;width:8px;height:1.1em;background:#6fd3a8;vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+.editor .pasted{background:rgba(255,155,99,.22);outline:1px solid rgba(255,155,99,.6);border-radius:3px}
+@keyframes blink{50%{opacity:0}}
+.side{display:flex;flex-direction:column;gap:14px}
+.score{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--bg)}
+.score b{font:700 2.8rem "Bricolage Grotesque";letter-spacing:-.03em}
+.score small{display:block;color:var(--muted);font-size:.85rem}
+.bar{height:8px;border-radius:99px;background:var(--line);margin-top:10px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--ok);transition:width .6s,background .3s}
+.log{border:1px solid var(--line);border-radius:14px;padding:8px 6px;flex:1;min-height:130px;font-size:.88rem;list-style:none;margin:0;background:var(--bg)}
+.log li{display:flex;gap:10px;padding:6px 12px;align-items:baseline}
+.log time{font:400 .78rem "JetBrains Mono";color:var(--muted);min-width:38px}
+.tag{font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.n{background:var(--line);color:var(--muted)}
+.hint{font-size:.85rem;color:var(--muted);padding:12px 4px 2px}
+
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:44px}
+@media(max-width:760px){.vs{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:30px}
+.box .tag{display:inline-block;margin-bottom:16px}
+.box h3{margin-bottom:8px}
+
+.mods{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+@media(max-width:860px){.mods{grid-template-columns:1fr}}
+.mod{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--ok);border-radius:18px;padding:28px}
+.mod h3{margin-bottom:10px}
+.mod p{color:var(--muted);font-size:.98rem}
+.note{margin-top:32px;padding:20px 24px;background:var(--ok-bg);border-radius:14px;max-width:780px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px;counter-reset:s}
+@media(max-width:760px){.steps{grid-template-columns:1fr}}
+.step{padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.step:before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--ok);color:#f6f2e8;font-weight:600;margin-bottom:16px}
+.step p{color:var(--muted);font-size:.98rem;margin-top:6px}
+
+.tw{overflow-x:auto;margin-top:40px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.95rem}
+th,td{padding:15px 20px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted);font-size:.85rem}
+td.c,th.c{text-align:center}
+tr:last-child td{border-bottom:0}
+tr.us td{background:var(--ok);color:#f6f2e8;font-weight:600}
+tr.us .y{color:#f6f2e8}
+.y{color:var(--ok);font-weight:700}.no{color:var(--muted)}
+
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+.cols .box{padding:26px}
+.cols ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:.96rem}
+.road{display:flex;margin-top:40px;flex-wrap:wrap}
+.road div{flex:1;min-width:180px;padding:18px 20px 18px 0;border-top:3px solid var(--line)}
+.road div:first-child{border-top-color:var(--ok)}
+.road b{display:block;font-size:.85rem;color:var(--muted);font-weight:500}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:7px 16px;font-size:.9rem;margin:6px 8px 0 0;background:var(--surface)}
+
+.final{background:var(--deep);color:#efe9da;border-radius:28px;padding:72px 40px;text-align:center}
+.final h2{margin-bottom:14px}
+.final p{opacity:.8;max-width:50ch;margin:0 auto 30px}
+.final .btn{background:#efe9da;color:var(--deep);border-color:#efe9da}
+.final .btn:hover{background:#fff}
+footer{padding:40px 0 52px;text-align:center;color:var(--muted);font-size:.9rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.video{margin-top:36px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--code);aspect-ratio:16/9;display:grid;place-items:center;color:var(--code-ink);text-align:center}
+.video iframe{width:100%;height:100%;border:0}
+.video p{max-width:34ch;opacity:.8;padding:20px}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:28px;font-size:.93rem}
+.flow span{padding:9px 16px;border-radius:99px;background:var(--surface);border:1px solid var(--line)}
+.flow span.k{background:var(--ok);color:#f6f2e8;border-color:var(--ok);font-weight:600}
+.flow i{color:var(--muted);font-style:normal}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+@media(max-width:760px){.contact{grid-template-columns:1fr}}
+.contact .box a{font-weight:600;word-break:break-all}
+.contact .box p{margin-top:6px;color:var(--muted)}
+.final .em{display:block;margin-top:18px;opacity:.85;font-size:.95rem}
+.final .em a{color:#efe9da}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#top"><i></i>FORGE</a>
+  <ul><li><a href="#problem">Problem</a></li><li><a href="#product">Product</a></li><li><a href="#how">How it works</a></li><li><a href="#trust">Privacy</a></li><li><a href="#contact">Contact</a></li></ul>
+  <a class="btn" data-mail href="mailto:">Request a demo</a>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <div class="copy">
+    <h1>Proof that STEM learning actually happened.</h1>
+    <p class="lead">FORGE shows how a student reached a code, math or lab solution, not just the final answer, so AI-made work can't pass as learning.</p>
+    <div class="cta"><a class="btn" data-mail href="mailto:">Request a demo</a><a class="btn ghost" href="#demo">Watch a session replay</a></div>
+  <div class="facts"><span>Covers code, math and lab work</span><span>Tamper-evident session logs</span><span>Built for India's DPDP Act 2023</span></div>
+  </div>
+
+  <div class="demo" id="demo">
+    <div class="tabs" role="tablist" aria-label="Sample student sessions">
+      <button class="tab" role="tab" aria-selected="true" data-s="a">Student A: worked it out</button>
+      <button class="tab" role="tab" aria-selected="false" data-s="b">Student B: pasted it in</button>
+      <button class="tab replay" id="replay">Replay</button>
+    </div>
+    <div class="grid">
+      <div class="editor" id="ed" aria-label="Replay of student code editor"></div>
+      <div class="side">
+        <div class="score"><small>Process Authenticity Score</small><b id="sc">0</b><div class="bar"><span id="bar"></span></div></div>
+        <ul class="log" id="log" aria-live="polite"></ul>
+      </div>
+    </div>
+    <p class="hint">A sample replay. Every score comes with the evidence behind it.</p>
+  </div>
+</div></header>
+
+<section id="problem" class="band"><div class="wrap">
+  <h2>Grading final answers no longer proves learning.</h2>
+  <p class="lead sub">AI produces correct answers instantly. Writing tools already capture the writing process, but nothing equivalent exists for code, derivations or lab work, where faking a final answer is even easier.</p>
+  <div class="vs">
+    <div class="box"><span class="tag warn">Easy to fake</span><h3>The final answer</h3><p class="muted">Submitted at the end. Looks the same whether a student or an AI produced it, and shows nothing about reasoning.</p></div>
+    <div class="box"><span class="tag ok">Hard to fake</span><h3>The process</h3><p class="muted">Every edit, derivation step and observation, captured over time as evidence of real effort.</p></div>
+  </div>
+</div></section>
+
+<section id="product"><div class="wrap">
+  <h2>Three modules, one evidence layer.</h2>
+  <div class="mods">
+    <div class="mod"><h3>Code</h3><p>Replays edit history, detects pasted blocks and burst typing, tracks test-run progress and compares versions with AST-diff.</p></div>
+    <div class="mod"><h3>Math</h3><p>Checks each derivation step symbolically with SymPy and tests whether the reasoning stays consistent from line to line.</p></div>
+    <div class="mod"><h3>Lab</h3><p>Verifies timestamped observation logs, data-entry consistency and the integrity of recorded results.</p></div>
+  </div>
+  <div class="note">Instructors can see how a student reached a solution, check understanding with follow-up questions, grade with evidence, and spot weak areas across a whole batch. FORGE is a learning-evidence tool, not a surveillance tool.</div>
+</div></section>
+
+<section id="how" class="band"><div class="wrap">
+  <h2>From keystroke to explainable score.</h2>
+  <div class="steps">
+    <div class="step"><h3>Capture</h3><p>Students work in a secure workspace. Edits, steps and logs stream live.</p></div>
+    <div class="step"><h3>Analyze</h3><p>Code, math and lab engines look for paste bursts, broken reasoning and inconsistent data.</p></div>
+    <div class="step"><h3>Verify</h3><p>Instructors get a Process Authenticity Score with traceable evidence, never a black-box verdict.</p></div>
+  </div>
+  <div class="flow"><span>Student types</span><i>›</i><span>Events captured</span><i>›</i><span>Code, math and lab analysis</span><i>›</i><span class="k">Authenticity Score + evidence</span></div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>No other tool covers STEM process verification.</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Tool</th><th class="c">Writing</th><th class="c">Code</th><th class="c">Math</th><th class="c">Lab</th></tr></thead>
+    <tbody>
+      <tr><td>Turnitin Clarity</td><td class="c y">✓</td><td class="c no">–</td><td class="c no">–</td><td class="c no">–</td></tr>
+      <tr><td>Grammarly Authorship</td><td class="c y">✓</td><td class="c no">–</td><td class="c no">–</td><td class="c no">–</td></tr>
+      <tr><td>Gradescope</td><td class="c no">–</td><td class="c no">–</td><td class="c no">–</td><td class="c no">–</td></tr>
+      <tr><td>GitHub Classroom</td><td class="c no">–</td><td class="c y">✓</td><td class="c no">–</td><td class="c no">–</td></tr>
+      <tr><td>Proctorio / Honorlock</td><td class="c no">–</td><td class="c no">–</td><td class="c no">–</td><td class="c no">–</td></tr>
+      <tr class="us"><td>FORGE</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+    </tbody></table></div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Built first for engineering education.</h2>
+  <div class="cols">
+    <div class="box"><h3>Students</h3><p class="muted" style="margin-top:6px">Work in a workspace that records their process and lets them show their thinking.</p></div>
+    <div class="box"><h3>Instructors</h3><p class="muted" style="margin-top:6px">Review dashboards, scores and session evidence in one place.</p></div>
+    <div class="box"><h3>Institutions</h3><p class="muted" style="margin-top:6px">Manage oversight and connect to Moodle or Canvas through LTI 1.3.</p></div>
+  </div>
+  <p class="muted" style="margin-top:22px">Also useful for coding bootcamps, online course platforms, school STEM programs and, later, hiring and skill assessment.</p>
+</div></section>
+
+<section id="trust" class="band"><div class="wrap">
+  <h2>Secure by design, private by default.</h2>
+  <div class="cols">
+    <div class="box"><h3>Sign-in</h3><ul><li>Institutional SSO (Google, Microsoft)</li><li>OAuth2 and OpenID Connect</li><li>Role-based access control</li></ul></div>
+    <div class="box"><h3>Security</h3><ul><li>TLS in transit, AES-256 at rest</li><li>SHA-256 hash-chained session logs</li><li>Tamper-evident audit trail</li></ul></div>
+    <div class="box"><h3>Privacy</h3><ul><li>Explicit student consent</li><li>Data minimisation by design</li><li>Built for India's DPDP Act 2023</li></ul></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <h2>From MVP to campus pilots.</h2>
+  <div class="road">
+    <div><b>Phase 1</b>Code module MVP</div><div><b>Phase 2</b>Math module</div><div><b>Phase 3</b>Lab module and LMS integrations</div><div><b>Phase 4</b>Pilots with colleges</div>
+  </div>
+  <p style="margin-top:20px"><span class="pill">SDG 4 Quality Education</span><span class="pill">SDG 9 Industry and Innovation</span><span class="pill">SDG 8 Decent Work and Growth</span></p>
+</div></section>
+
+<section id="contact"><div class="wrap">
+  <h2>Talk to the team.</h2>
+  <p class="lead sub">Want a pilot on your course or department? Get in touch and we'll set up a demo.</p>
+  <div class="contact">
+    <div class="box"><h3>Email and phone</h3><p><a href="mailto:sec25ad292@gmail.com">sec25ad292@gmail.com</a><br><a href="mailto:sec25ad002@gmail.com">sec25ad002@gmail.com</a></p><p><a href="tel:+919445109596">+91 94451 09596</a><br><a href="tel:+919042546587">+91 90425 46587</a></p></div>
+    <div class="box"><h3>Team</h3><p>Pixel Pirates<br>Sri Sairam Engineering College<br>Innovative Design Lab (IDL)</p></div>
+  </div>
+  <div class="final" style="margin-top:40px">
+    <h2>The process is the proof.</h2>
+    <p>See FORGE on your own course.</p>
+    <a class="btn" data-mail href="mailto:">Request a demo</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">FORGE by Pixel Pirates · Sri Sairam Engineering College · Innovative Design Lab (IDL)</div></footer>
+
+<script>
+/* EDIT THESE LINES */
+const EMAILS=["sec25ad292@gmail.com","sec25ad002@gmail.com"];
+document.querySelectorAll('[data-mail]').forEach(a=>{a.href='mailto:'+EMAILS.join(',')+'?subject=FORGE%20demo%20request'});
+</script>
+<script>
+const S={
+ a:{score:91,steps:[
+  {k:'type',t:'def is_palindrome(s):\n',m:'Typed function header',tag:['ok','Natural typing']},
+  {k:'type',t:'    s = s.lower()\n',m:'Typed normalising step',tag:['ok','Natural typing']},
+  {k:'test',m:'Ran tests: 1 of 3 pass',tag:['n','Test run']},
+  {k:'type',t:"    s = ''.join(c for c in s if c.isalnum())\n",m:'Fixed failing case',tag:['ok','Revision']},
+  {k:'test',m:'Ran tests: 2 of 3 pass',tag:['n','Test run']},
+  {k:'type',t:'    return s == s[::-1]\n',m:'Typed return',tag:['ok','Natural typing']},
+  {k:'test',m:'Ran tests: 3 of 3 pass',tag:['ok','Progress']}]},
+ b:{score:23,steps:[
+  {k:'paste',t:"def is_palindrome(s):\n    s = s.lower()\n    s = ''.join(c for c in s if c.isalnum())\n    return s == s[::-1]\n",m:'Pasted 4 lines in 0.0s',tag:['warn','Paste burst']},
+  {k:'test',m:'First test run: 3 of 3 pass',tag:['warn','No progression']},
+  {k:'flag',m:'No edits before or after paste',tag:['warn','Low effort signal']}]}
+};
+const ed=document.getElementById('ed'),log=document.getElementById('log'),sc=document.getElementById('sc'),bar=document.getElementById('bar');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cur='a',run=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function setScore(v,col){sc.textContent=v;bar.style.width=v+'%';bar.style.background=col}
+async function play(){
+  const id=++run,d=S[cur];let code='',clock=0,pasted=0;
+  ed.innerHTML='<span class="cur"></span>';log.innerHTML='';setScore(0,'var(--ok)');
+  for(const st of d.steps){
+    if(id!==run)return;
+    if(st.k==='type'){for(const ch of st.t){if(id!==run)return;code+=ch;render(code,0);await sleep(16)}clock+=9}
+    else if(st.k==='paste'){await sleep(500);pasted=st.t.length;code+=st.t;render(code,pasted);clock+=4}
+    else clock+=st.k==='test'?6:2;
+    const li=document.createElement('li');
+    li.innerHTML='<time>0:'+String(clock).padStart(2,'0')+'</time><span>'+st.m+' <span class="tag '+st.tag[0]+'">'+st.tag[1]+'</span></span>';
+    log.appendChild(li);
+    await sleep(350);
+  }
+  setScore(d.score,d.score>60?'var(--ok)':'var(--warn)');
+}
+function render(code,p){
+  const a=esc(code.slice(0,code.length-p)),b=esc(code.slice(code.length-p));
+  ed.innerHTML=a+(p?'<span class="pasted">'+b+'</span>':'')+'<span class="cur"></span>';
+}
+document.querySelectorAll('.tab[data-s]').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab[data-s]').forEach(x=>x.setAttribute('aria-selected',x===t));
+  cur=t.dataset.s;play();
+});
+document.getElementById('replay').onclick=play;
+let started=false;
+new IntersectionObserver((e,o)=>{if(e[0].isIntersecting&&!started){started=true;play();o.disconnect()}},{threshold:.3}).observe(document.getElementById('demo'));
+</script>
+</body>
+</html>
